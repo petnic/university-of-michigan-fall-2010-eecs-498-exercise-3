@@ -3,17 +3,24 @@
 //Exercise 3
 //Dylan Box
 //Nicholas Peters
-//Justin Winters
+//Joshua Winters
 
 //Write Variables
 int color = 0;
+int flexRead = 0;
+int flexWrite = 0;
+int brightnessWrite = 0;
 int redWrite = 0;
 int greenWrite = 0;
 int blueWrite = 0;
+int dimRedWrite = 0;
+int dimGreenWrite = 0;
+int dimBlueWrite = 0;
 
 void setup() {
   Serial.begin(9600);
   
+  pinMode(6, OUTPUT); //Speaker
   pinMode(9, OUTPUT); //Red
   pinMode(10, OUTPUT); //Green
   pinMode(11, OUTPUT); //Blue
@@ -65,9 +72,20 @@ void loop()
         break;  
     }
     
+    //Dim Brightness via Flex Sensor
+    flexRead = analogRead(3);
+    flexWrite = map(flexRead, 100, 350, 0, 100);
+    dimRedWrite = ((flexWrite * redWrite) / 100);
+    dimGreenWrite = ((flexWrite * greenWrite) / 100);
+    dimBlueWrite = ((flexWrite * blueWrite) / 100);
+    
     //Write Color
-    analogWrite(9, redWrite);
-    analogWrite(10, greenWrite);
-    analogWrite(11, blueWrite);
+    analogWrite(9, dimRedWrite);
+    analogWrite(10, dimGreenWrite);
+    analogWrite(11, dimBlueWrite);
+    
+    //Brightness to Sound
+    brightnessWrite = map((dimRedWrite + dimBlueWrite + dimGreenWrite), 0, (255 * 3), 0, 255);
+    analogWrite(6, brightnessWrite);
 }
 
